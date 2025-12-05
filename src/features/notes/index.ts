@@ -1,0 +1,1 @@
+export { useFilteredNotes } from './useFilteredNotes';
