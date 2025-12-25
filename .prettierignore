@@ -1,0 +1,24 @@
+# Build outputs
+dist
+build
+coverage
+tmp
+
+# Dependencies
+node_modules
+
+# Cache
+.nx
+.turbo
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+
+# Auto-generated
+**/routeTree.gen.ts
+*.gen.ts
+
+# Design system build
+libs/design-system/build
+libs/design-system/storybook-static

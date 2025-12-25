@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "../../node_modules/.tmp/tsconfig.notes.tsbuildinfo",
+    "outDir": "../../dist/out-tsc",
+    "baseUrl": "../..",
+    "paths": {
+      "@/*": ["./apps/notes/src/*"],
+      "@knowtis/design-system": ["./libs/design-system/src/index.ts"],
+      "@knowtis/shared-hooks": ["./libs/shared/hooks/src/index.ts"],
+      "@knowtis/shared-util": ["./libs/shared/util/src/index.ts"],
+      "@knowtis/data-access-notes": ["./libs/data-access/notes/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx"
+  ]
+}

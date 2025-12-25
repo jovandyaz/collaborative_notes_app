@@ -1,0 +1,38 @@
+{
+  "font": {
+    "family": {
+      "sans": {
+        "value": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "type": "fontFamily"
+      },
+      "mono": {
+        "value": "'JetBrains Mono', 'Fira Code', Consolas, monospace",
+        "type": "fontFamily"
+      }
+    },
+    "size": {
+      "xs": { "value": "0.75rem", "type": "fontSize", "comment": "12px" },
+      "sm": { "value": "0.875rem", "type": "fontSize", "comment": "14px" },
+      "base": { "value": "1rem", "type": "fontSize", "comment": "16px" },
+      "lg": { "value": "1.125rem", "type": "fontSize", "comment": "18px" },
+      "xl": { "value": "1.25rem", "type": "fontSize", "comment": "20px" },
+      "2xl": { "value": "1.5rem", "type": "fontSize", "comment": "24px" },
+      "3xl": { "value": "1.875rem", "type": "fontSize", "comment": "30px" },
+      "4xl": { "value": "2.25rem", "type": "fontSize", "comment": "36px" }
+    },
+    "weight": {
+      "normal": { "value": "400", "type": "fontWeight" },
+      "medium": { "value": "500", "type": "fontWeight" },
+      "semibold": { "value": "600", "type": "fontWeight" },
+      "bold": { "value": "700", "type": "fontWeight" }
+    },
+    "lineHeight": {
+      "none": { "value": "1", "type": "lineHeight" },
+      "tight": { "value": "1.25", "type": "lineHeight" },
+      "snug": { "value": "1.375", "type": "lineHeight" },
+      "normal": { "value": "1.5", "type": "lineHeight" },
+      "relaxed": { "value": "1.625", "type": "lineHeight" },
+      "loose": { "value": "2", "type": "lineHeight" }
+    }
+  }
+}

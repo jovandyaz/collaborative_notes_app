@@ -1,0 +1,23 @@
+{
+  "name": "shared-hooks",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/hooks/src",
+  "projectType": "library",
+  "tags": ["type:util", "scope:shared"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/shared/hooks",
+        "command": "eslint src"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/shared/hooks",
+        "command": "vitest run"
+      }
+    }
+  }
+}

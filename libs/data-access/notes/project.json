@@ -1,0 +1,23 @@
+{
+  "name": "data-access-notes",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/data-access/notes/src",
+  "projectType": "library",
+  "tags": ["type:data-access", "scope:notes"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/data-access/notes",
+        "command": "eslint src"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/data-access/notes",
+        "command": "vitest run"
+      }
+    }
+  }
+}

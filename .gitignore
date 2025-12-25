@@ -22,3 +22,19 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Nx
+.nx/cache
+.nx/workspace-data
+AGENTS.md
+
+# Coverage
+coverage
+
+# Build outputs
+dist
+tmp
+
+# Design System
+libs/design-system/build
+libs/design-system/storybook-static

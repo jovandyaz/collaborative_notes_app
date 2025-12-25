@@ -1,0 +1,13 @@
+# Ignore documentation
+docs
+
+# Ignore IDE settings
+.idea
+.vscode
+
+# Ignore coverage reports
+coverage
+
+# Ignore build outputs
+dist
+tmp

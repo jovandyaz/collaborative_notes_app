@@ -1,0 +1,94 @@
+@import 'tailwindcss';
+@import '../build/css/variables.css';
+
+@theme {
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --radius: 0.75rem;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --background: var(--color-semantic-light-background);
+  --foreground: var(--color-semantic-light-foreground);
+  --card: var(--color-semantic-light-card);
+  --card-foreground: var(--color-semantic-light-card-foreground);
+  --popover: var(--color-semantic-light-popover);
+  --popover-foreground: var(--color-semantic-light-popover-foreground);
+  --muted: var(--color-semantic-light-muted);
+  --muted-foreground: var(--color-semantic-light-muted-foreground);
+  --primary: var(--color-semantic-light-primary);
+  --primary-foreground: var(--color-semantic-light-primary-foreground);
+  --secondary: var(--color-semantic-light-secondary);
+  --secondary-foreground: var(--color-semantic-light-secondary-foreground);
+  --accent: var(--color-semantic-light-accent);
+  --accent-foreground: var(--color-semantic-light-accent-foreground);
+  --destructive: var(--color-semantic-light-destructive);
+  --destructive-foreground: var(--color-semantic-light-destructive-foreground);
+  --border: var(--color-semantic-light-border);
+  --input: var(--color-semantic-light-input);
+  --ring: var(--color-semantic-light-ring);
+  --radius: var(--radius-md);
+}
+
+.dark {
+  --background: var(--color-semantic-dark-background);
+  --foreground: var(--color-semantic-dark-foreground);
+  --card: var(--color-semantic-dark-card);
+  --card-foreground: var(--color-semantic-dark-card-foreground);
+  --popover: var(--color-semantic-dark-popover);
+  --popover-foreground: var(--color-semantic-dark-popover-foreground);
+  --muted: var(--color-semantic-dark-muted);
+  --muted-foreground: var(--color-semantic-dark-muted-foreground);
+  --primary: var(--color-semantic-dark-primary);
+  --primary-foreground: var(--color-semantic-dark-primary-foreground);
+  --secondary: var(--color-semantic-dark-secondary);
+  --secondary-foreground: var(--color-semantic-dark-secondary-foreground);
+  --accent: var(--color-semantic-dark-accent);
+  --accent-foreground: var(--color-semantic-dark-accent-foreground);
+  --destructive: var(--color-semantic-dark-destructive);
+  --destructive-foreground: var(--color-semantic-dark-destructive-foreground);
+  --border: var(--color-semantic-dark-border);
+  --input: var(--color-semantic-dark-input);
+  --ring: var(--color-semantic-dark-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+}

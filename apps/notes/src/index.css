@@ -1,0 +1,54 @@
+/* Import design system styles (includes Tailwind, tokens, and base theme) */
+@import '@knowtis/design-system/styles.css';
+
+/* Scan design-system components for Tailwind classes */
+@source "../../../libs/design-system/src/**/*.tsx";
+
+@theme {
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/80 dark:bg-black/30 backdrop-blur-md border border-white/40 dark:border-white/5 shadow-sm;
+  }
+
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/40 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
+}

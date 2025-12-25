@@ -1,0 +1,11 @@
+{
+  "radius": {
+    "none": { "value": "0", "type": "borderRadius" },
+    "sm": { "value": "0.25rem", "type": "borderRadius", "comment": "4px" },
+    "md": { "value": "0.5rem", "type": "borderRadius", "comment": "8px" },
+    "lg": { "value": "0.75rem", "type": "borderRadius", "comment": "12px" },
+    "xl": { "value": "1rem", "type": "borderRadius", "comment": "16px" },
+    "2xl": { "value": "1.5rem", "type": "borderRadius", "comment": "24px" },
+    "full": { "value": "9999px", "type": "borderRadius" }
+  }
+}
