@@ -1,0 +1,21 @@
+# Railway Configuration for Knowtis API
+# https://docs.railway.com/guides/config-as-code
+
+[build]
+# Build command for NestJS API in Nx monorepo
+builder = "nixpacks"
+buildCommand = "pnpm install --frozen-lockfile && pnpm build:api"
+watchPatterns = ["apps/api/**", "libs/**", "package.json", "pnpm-lock.yaml"]
+
+[deploy]
+# Start command for the API
+startCommand = "node dist/apps/api/main.js"
+healthcheckPath = "/api/v1/health/ping"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[env]
+# Default environment variables
+NODE_ENV = "production"
+PORT = "3333"

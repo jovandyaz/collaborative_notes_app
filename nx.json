@@ -10,7 +10,8 @@
       "!{projectRoot}/**/*.spec.tsx",
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/.eslintrc.json",
-      "!{projectRoot}/eslint.config.js"
+      "!{projectRoot}/eslint.config.js",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)"
     ],
     "sharedGlobals": [
       "{workspaceRoot}/tsconfig.base.json",
@@ -50,6 +51,15 @@
     "test:run": {
       "inputs": ["default", "^production"],
       "cache": true
+    },
+    "@nx/webpack:webpack": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/vitest:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "defaultBase": "main",

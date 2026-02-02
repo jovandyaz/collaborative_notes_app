@@ -1,5 +1,7 @@
 packages:
-  - 'apps/*'
-  - 'libs/*'
-  - 'libs/shared/*'
-  - 'libs/data-access/*'
+  - apps/*
+  - libs/*
+  - libs/shared/*
+  - libs/data-access/*
+
+storeDir: /Users/jovandyaz/Library/pnpm/store/v10
