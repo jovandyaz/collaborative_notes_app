@@ -13,10 +13,11 @@
       }
     },
     "test": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "cwd": "libs/data-access/notes",
-        "command": "vitest run"
+        "reportsDirectory": "../../../coverage/libs/data-access/notes",
+        "passWithNoTests": true
       }
     }
   }

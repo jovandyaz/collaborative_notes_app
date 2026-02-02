@@ -118,7 +118,9 @@ function DialogPortal({ children }: { children: ReactNode }) {
     return () => setMounted(false);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return null;
+  }
 
   return createPortal(children, document.body);
 }
@@ -129,7 +131,9 @@ function DialogOverlay({
 }: HTMLAttributes<HTMLDivElement>) {
   const { open, onOpenChange } = useDialogContext();
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
     <div
@@ -155,7 +159,9 @@ function DialogContent({ className, children, ...props }: DialogContentProps) {
   const previousActiveElement = useRef<Element | null>(null);
 
   const getFocusableElements = useCallback(() => {
-    if (!contentRef.current) return [];
+    if (!contentRef.current) {
+      return [];
+    }
     return Array.from(
       contentRef.current.querySelectorAll<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -219,9 +225,12 @@ function DialogContent({ className, children, ...props }: DialogContentProps) {
         }
       };
     }
+    return;
   }, [open, getFocusableElements, triggerRef]);
 
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
     <DialogPortal>

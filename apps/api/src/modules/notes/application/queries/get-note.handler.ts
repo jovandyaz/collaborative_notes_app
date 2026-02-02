@@ -1,0 +1,57 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { err, ok, type Result } from 'neverthrow';
+
+import { UserId } from '../../../auth/domain';
+import {
+  NOTE_REPOSITORY,
+  NoteErrors,
+  type NoteDomainError,
+  type NoteEntity,
+  type NoteRepository,
+} from '../../domain';
+
+export interface GetNoteInput {
+  readonly noteId: string;
+  readonly userId: string;
+}
+
+export type NoteWithAccess = NoteEntity & {
+  accessLevel: 'owner' | 'editor' | 'viewer';
+};
+
+@Injectable()
+export class GetNoteHandler {
+  constructor(
+    @Inject(NOTE_REPOSITORY) private readonly noteRepository: NoteRepository
+  ) {}
+
+  async execute(
+    input: GetNoteInput
+  ): Promise<Result<NoteWithAccess, NoteDomainError>> {
+    const userIdResult = UserId.create(input.userId);
+    if (userIdResult.isErr()) {
+      return err(userIdResult.error as NoteDomainError);
+    }
+
+    const note = await this.noteRepository.findByIdWithOwner(input.noteId);
+    if (!note) {
+      return err(NoteErrors.noteNotFound(input.noteId));
+    }
+
+    if (note.ownerId === input.userId) {
+      return ok({ ...note, accessLevel: 'owner' });
+    }
+
+    const permission = await this.noteRepository.findPermission(
+      input.noteId,
+      userIdResult.value
+    );
+
+    if (note.isPublic || permission) {
+      const accessLevel = permission ? permission.permission.value : 'viewer';
+      return ok({ ...note, accessLevel });
+    }
+
+    return err(NoteErrors.permissionDenied());
+  }
+}

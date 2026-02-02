@@ -1,7 +1,8 @@
-import type { StorybookConfig } from '@storybook/react-vite';
-import tailwindcss from '@tailwindcss/vite';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
+
+import type { StorybookConfig } from '@storybook/react-vite';
+import tailwindcss from '@tailwindcss/vite';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

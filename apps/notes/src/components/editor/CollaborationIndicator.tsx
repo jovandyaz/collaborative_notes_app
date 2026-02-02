@@ -1,8 +1,8 @@
 import { memo } from 'react';
 
+import { cn } from '@knowtis/design-system';
 import { Users } from 'lucide-react';
 
-import { cn } from '@/lib';
 import type { CollaborativeUser } from '@/types';
 
 /**
@@ -19,7 +19,9 @@ export const CollaborationIndicator = memo(function CollaborationIndicator({
   users,
   className,
 }: CollaborationIndicatorProps) {
-  if (users.length === 0) return null;
+  if (users.length === 0) {
+    return null;
+  }
 
   return (
     <div

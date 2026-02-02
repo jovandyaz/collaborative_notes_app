@@ -1,3 +1,4 @@
+import { useDeleteNote } from '@knowtis/data-access-notes';
 import {
   Button,
   Dialog,
@@ -7,16 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@knowtis/design-system';
-import { AlertTriangle } from 'lucide-react';
-
-import { useNotesStore } from '@/stores';
+import { AlertTriangle, Loader2 } from 'lucide-react';
 
 /**
  * Delete note dialog props interface
- * @property {boolean} open - Whether the dialog is open
- * @property {function} onOpenChange - Function to call when the dialog is opened or closed
- * @property {string | null} noteId - The ID of the note to delete
- * @property {string} noteTitle - The title of the note to delete
  */
 interface DeleteNoteDialogProps {
   open: boolean;
@@ -31,13 +26,18 @@ export function DeleteNoteDialog({
   noteId,
   noteTitle,
 }: DeleteNoteDialogProps) {
-  const deleteNote = useNotesStore((state) => state.deleteNote);
+  const deleteNote = useDeleteNote();
 
   const handleDelete = () => {
-    if (noteId) {
-      deleteNote(noteId);
-      onOpenChange(false);
+    if (!noteId) {
+      return;
     }
+
+    deleteNote.mutate(noteId, {
+      onSuccess: () => {
+        onOpenChange(false);
+      },
+    });
   };
 
   return (
@@ -60,11 +60,26 @@ export function DeleteNoteDialog({
         </DialogHeader>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={deleteNote.isPending}
+          >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleDelete}>
-            Delete
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={deleteNote.isPending}
+          >
+            {deleteNote.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              'Delete'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

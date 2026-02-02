@@ -38,3 +38,10 @@ tmp
 # Design System
 libs/design-system/build
 libs/design-system/storybook-static
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+vitest.config.*.timestamp*

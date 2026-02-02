@@ -1,23 +1,46 @@
 import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns';
 
 /**
- * Format a timestamp for display in note cards
- * @param timestamp - The timestamp to format
- * @returns The formatted date
+ * Type for date values that can come from various sources
+ * - number: Unix timestamp in milliseconds
+ * - Date: JavaScript Date object
+ * - string: ISO 8601 date string (from JSON API)
  */
-export function formatNoteDate(timestamp: number): string {
-  if (!Number.isFinite(timestamp) || timestamp < 0) {
+type DateValue = number | Date | string;
+
+function normalizeToDate(value: DateValue): Date | null {
+  if (value instanceof Date) {
+    return isNaN(value.getTime()) ? null : value;
+  }
+
+  if (typeof value === 'string') {
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value) || value < 0) {
+      return null;
+    }
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  return null;
+}
+
+export function formatNoteDate(timestamp: DateValue): string {
+  const date = normalizeToDate(timestamp);
+
+  if (!date) {
     return 'Invalid date';
   }
 
-  if (timestamp > Date.now()) {
+  const now = Date.now();
+  const dateMs = date.getTime();
+
+  if (dateMs > now) {
     return 'Just now';
-  }
-
-  const date = new Date(timestamp);
-
-  if (isNaN(date.getTime())) {
-    return 'Invalid date';
   }
 
   if (isToday(date)) {
@@ -28,7 +51,7 @@ export function formatNoteDate(timestamp: number): string {
     return `Yesterday at ${format(date, 'h:mm a')}`;
   }
 
-  const daysDiff = Math.floor((Date.now() - timestamp) / (1000 * 60 * 60 * 24));
+  const daysDiff = Math.floor((now - dateMs) / (1000 * 60 * 60 * 24));
 
   if (daysDiff < 7) {
     return formatDistanceToNow(date, { addSuffix: true });
@@ -37,19 +60,10 @@ export function formatNoteDate(timestamp: number): string {
   return format(date, 'MMM d, yyyy');
 }
 
-/**
- * Format a timestamp for detailed view (e.g., note editor)
- * @param timestamp - The timestamp to format
- * @returns The formatted date
- */
-export function formatNoteDateFull(timestamp: number): string {
-  if (!Number.isFinite(timestamp) || timestamp < 0) {
-    return 'Invalid date';
-  }
+export function formatNoteDateFull(timestamp: DateValue): string {
+  const date = normalizeToDate(timestamp);
 
-  const date = new Date(timestamp);
-
-  if (isNaN(date.getTime())) {
+  if (!date) {
     return 'Invalid date';
   }
 

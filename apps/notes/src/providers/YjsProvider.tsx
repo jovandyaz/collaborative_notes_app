@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { IndexeddbPersistence } from 'y-indexeddb';
-import { removeAwarenessStates } from 'y-protocols/awareness';
-import { WebrtcProvider } from 'y-webrtc';
+import { Awareness } from 'y-protocols/awareness';
 import * as Y from 'yjs';
 
 import { COLLAB_CONFIG, isInvalidStateError } from '@/lib';
@@ -19,14 +18,13 @@ import {
   createInitialUser,
   createMessageHandler,
 } from './YjsProvider.helpers';
-import { getRoomName } from './YjsProvider.helpers';
 import type { DocumentResources, YjsProviderProps } from './YjsProvider.types';
 
 export function YjsProvider({ children }: YjsProviderProps) {
   const resourcesRef = useRef<DocumentResources>({
     docs: new Map(),
     persistence: new Map(),
-    providers: new Map(),
+    awareness: new Map(),
   });
   const channelRef = useRef<BroadcastChannel | null>(null);
 
@@ -112,29 +110,28 @@ export function YjsProvider({ children }: YjsProviderProps) {
     [getYDoc]
   );
 
-  const getProvider = useCallback(
-    (noteId: string): WebrtcProvider => {
+  const getAwareness = useCallback(
+    (noteId: string): Awareness | null => {
       const resources = resourcesRef.current;
-      let provider = resources.providers.get(noteId);
+      let awareness = resources.awareness.get(noteId);
 
-      if (!provider) {
-        const doc = getYDoc(noteId);
+      if (!awareness) {
+        const doc = resources.docs.get(noteId);
+        if (!doc) {
+          return null;
+        }
 
-        provider = new WebrtcProvider(getRoomName(noteId), doc, {
-          signaling: [...COLLAB_CONFIG.SIGNALING_SERVERS],
-        });
-
-        resources.providers.set(noteId, provider);
-
-        provider.awareness.setLocalStateField('user', {
+        awareness = new Awareness(doc);
+        awareness.setLocalStateField('user', {
           name: currentUser.name,
           color: currentUser.color,
         });
+        resources.awareness.set(noteId, awareness);
       }
 
-      return provider;
+      return awareness;
     },
-    [getYDoc, currentUser.name, currentUser.color]
+    [currentUser.name, currentUser.color]
   );
 
   const broadcastPresence = useCallback(
@@ -172,34 +169,10 @@ export function YjsProvider({ children }: YjsProviderProps) {
   );
 
   const clearAwarenessForNote = useCallback((noteId: string) => {
-    const provider = resourcesRef.current.providers.get(noteId);
-    if (provider?.awareness) {
-      provider.awareness.setLocalStateField('cursor', null);
+    const awareness = resourcesRef.current.awareness.get(noteId);
+    if (awareness) {
+      awareness.setLocalStateField('cursor', null);
     }
-  }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      resourcesRef.current.providers.forEach((provider) => {
-        if (provider.awareness) {
-          try {
-            removeAwarenessStates(
-              provider.awareness,
-              [provider.awareness.clientID],
-              'window unload'
-            );
-          } catch (error) {
-            console.error('Failed to remove awareness state:', error);
-          }
-        }
-      });
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
   }, []);
 
   useEffect(() => {
@@ -226,7 +199,7 @@ export function YjsProvider({ children }: YjsProviderProps) {
     () => ({
       getYDoc,
       getYText,
-      getProvider,
+      getAwareness,
       currentUser,
       activeUsers,
       broadcastPresence,
@@ -236,7 +209,7 @@ export function YjsProvider({ children }: YjsProviderProps) {
     [
       getYDoc,
       getYText,
-      getProvider,
+      getAwareness,
       currentUser,
       activeUsers,
       broadcastPresence,

@@ -1,7 +1,6 @@
-import type { WebrtcProvider } from 'y-webrtc';
-import type * as Y from 'yjs';
-
 import type { CollaborativeUser } from '@/types';
+import type { Awareness } from 'y-protocols/awareness';
+import type * as Y from 'yjs';
 
 /**
  * Props for the CollaborativeEditor component
@@ -25,7 +24,7 @@ export interface CollaborativeEditorProps {
  * Props for the InternalEditor component
  * @param yDoc - The Yjs document instance
  * @param yXmlFragment - The Yjs XML fragment for storing editor content
- * @param provider - The WebRTC provider for peer-to-peer synchronization
+ * @param awareness - The Awareness instance for cursor tracking
  * @param currentUser - The current user information
  * @param initialContent - The initial content of the editor
  * @param onUpdate - Function to update the content of the editor
@@ -35,7 +34,7 @@ export interface CollaborativeEditorProps {
 export interface InternalEditorProps {
   yDoc: Y.Doc;
   yXmlFragment: Y.XmlFragment;
-  provider: WebrtcProvider;
+  awareness: Awareness | null;
   currentUser: CollaborativeUser;
   initialContent: string;
   onUpdate: (content: string) => void;

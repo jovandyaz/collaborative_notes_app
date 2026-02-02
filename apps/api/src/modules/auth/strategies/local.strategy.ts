@@ -1,0 +1,28 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-local';
+
+import { LoginUserHandler } from '../application';
+
+@Injectable()
+export class LocalStrategy extends PassportStrategy(Strategy) {
+  constructor(private readonly loginHandler: LoginUserHandler) {
+    super({
+      usernameField: 'email',
+      passwordField: 'password',
+    });
+  }
+
+  async validate(email: string, password: string) {
+    const result = await this.loginHandler.validateCredentials({
+      email,
+      password,
+    });
+
+    if (result.isErr()) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    return result.value;
+  }
+}

@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 
+import { cn } from '@knowtis/design-system';
 import { EditorContent, useEditor } from '@tiptap/react';
 
 import {
+  isWebSocketEnabled,
   useActiveCollaborators,
   useCollaborativeEditor,
   usePresenceBroadcast,
+  useWebSocketCollaboration,
 } from '@/hooks';
-import { cn } from '@/lib';
 
 import { CollaborationIndicator } from './CollaborationIndicator';
 import './CollaborativeCursor.css';
@@ -28,7 +30,7 @@ const EDITOR_CONTAINER_CLASSES = cn(
 function InternalEditor({
   yDoc,
   yXmlFragment,
-  provider,
+  awareness,
   currentUser,
   initialContent,
   onUpdate,
@@ -38,7 +40,7 @@ function InternalEditor({
   const extensions = useEditorExtensions(
     yDoc,
     yXmlFragment,
-    provider,
+    awareness,
     currentUser
   );
 
@@ -67,7 +69,9 @@ function InternalEditor({
   });
 
   useEffect(() => {
-    if (!editor || !yXmlFragment || !initialContent) return;
+    if (!editor || !yXmlFragment || !initialContent) {
+      return;
+    }
 
     try {
       if (yXmlFragment.length === 0) {
@@ -130,6 +134,22 @@ export function CollaborativeEditor({
   const otherUsers = useActiveCollaborators(noteId);
   usePresenceBroadcast(noteId);
 
+  const wsEnabled = isWebSocketEnabled();
+  const { isConnected, remoteUsers } = useWebSocketCollaboration({
+    noteId,
+    yDoc: editorState.yDoc,
+    currentUser: {
+      name: editorState.currentUser.name,
+      color: editorState.currentUser.color,
+    },
+    enabled: wsEnabled,
+  });
+
+  const allUsers = wsEnabled ? [...otherUsers, ...remoteUsers] : otherUsers;
+  const uniqueUsers = allUsers.filter(
+    (user, index, self) => index === self.findIndex((u) => u.name === user.name)
+  );
+
   if (!editorState.isReady) {
     return (
       <div className={cn('relative', className)}>
@@ -141,12 +161,26 @@ export function CollaborativeEditor({
   return (
     <EditorErrorBoundary>
       <div className={cn('relative', className)}>
-        {otherUsers.length > 0 && <CollaborationIndicator users={otherUsers} />}
+        {wsEnabled && (
+          <div className="absolute top-2 right-2 z-10">
+            <div
+              className={cn(
+                'w-2 h-2 rounded-full',
+                isConnected ? 'bg-emerald-500' : 'bg-amber-500'
+              )}
+              title={isConnected ? 'Connected to server' : 'Connecting...'}
+            />
+          </div>
+        )}
+
+        {uniqueUsers.length > 0 && (
+          <CollaborationIndicator users={uniqueUsers} />
+        )}
 
         <InternalEditor
           yDoc={editorState.yDoc}
           yXmlFragment={editorState.yXmlFragment}
-          provider={editorState.provider}
+          awareness={editorState.awareness}
           currentUser={editorState.currentUser}
           initialContent={initialContent}
           onUpdate={onUpdate}

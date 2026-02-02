@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { useIsAuthenticated } from '@knowtis/auth';
+
 import { Sidebar } from './Sidebar';
 
 /**
@@ -11,6 +13,16 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
+  const isAuthenticated = useIsAuthenticated();
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-screen bg-(--background)">
+        <div className="w-full">{children}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-(--background)">
       <Sidebar />

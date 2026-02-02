@@ -6,25 +6,29 @@
     "moduleResolution": "bundler",
     "moduleDetection": "force",
     "jsx": "react-jsx",
-
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
     "erasableSyntaxOnly": true,
-
     "skipLibCheck": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
-
     "baseUrl": ".",
     "paths": {
       "@knowtis/design-system": ["libs/design-system/src/index.ts"],
       "@knowtis/shared-hooks": ["libs/shared/hooks/src/index.ts"],
       "@knowtis/shared-util": ["libs/shared/util/src/index.ts"],
-      "@knowtis/data-access-notes": ["libs/data-access/notes/src/index.ts"]
+      "@knowtis/data-access-notes": ["libs/data-access/notes/src/index.ts"],
+      "@knowtis/shared-types": ["libs/shared/types/src/index.ts"],
+      "@knowtis/api-client": ["libs/api-client/src/index.ts"],
+      "@knowtis/auth": ["libs/auth/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "dist"]

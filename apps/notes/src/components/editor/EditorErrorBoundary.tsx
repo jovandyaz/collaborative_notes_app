@@ -4,11 +4,6 @@ import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { Button, Card } from '@knowtis/design-system';
 import { AlertCircle } from 'lucide-react';
 
-/**
- * Editor error boundary props interface
- * @property {ReactNode} children - The content to display in the error boundary
- * @property {function} onReset - The function to call when the error boundary is reset
- */
 interface EditorErrorBoundaryProps {
   children: ReactNode;
   onReset?: () => void;
@@ -61,7 +56,7 @@ export function EditorErrorBoundary({
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onError={handleError}
-      onReset={onReset}
+      {...(onReset ? { onReset } : {})}
     >
       {children}
     </ErrorBoundary>
