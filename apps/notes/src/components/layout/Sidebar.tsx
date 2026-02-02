@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { useAuthUser } from '@knowtis/auth';
 import { Menu, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -11,6 +12,7 @@ import { SidebarUserFooter } from './SidebarUserFooter';
 
 export function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const user = useAuthUser();
 
   const closeMobileMenu = () => setIsMobileOpen(false);
 
@@ -37,7 +39,7 @@ export function Sidebar() {
       >
         <SidebarBrand />
         <NavigationLinks links={NAVIGATION_LINKS} />
-        <SidebarUserFooter />
+        <SidebarUserFooter username={user?.name ?? ''} />
       </motion.aside>
 
       <AnimatePresence>
@@ -63,7 +65,7 @@ export function Sidebar() {
                 links={NAVIGATION_LINKS}
                 onLinkClick={closeMobileMenu}
               />
-              <SidebarUserFooter />
+              <SidebarUserFooter username={user?.name ?? ''} />
             </motion.div>
           </>
         )}
