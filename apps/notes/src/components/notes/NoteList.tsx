@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
 
+import { useNotes } from '@knowtis/data-access-notes';
 import { Input } from '@knowtis/design-system';
-import { Search } from 'lucide-react';
+import { useDebounce } from '@knowtis/shared-hooks';
+import { Loader2, Search } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
-import { useDebounce, useFilteredNotes } from '@/hooks';
 import { DEBOUNCE_DELAYS } from '@/lib';
-import { useNotesStore } from '@/stores';
 
 import { CreateNoteDialog } from './CreateNoteDialog';
 import { DeleteNoteDialog } from './DeleteNoteDialog';
@@ -14,20 +14,49 @@ import { EmptyState } from './EmptyState';
 import { NoteCard } from './NoteCard';
 
 export function NoteList() {
-  const notes = useNotesStore((state) => state.notes);
-
   const [localSearch, setLocalSearch] = useState('');
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   const debouncedSearch = useDebounce(localSearch, DEBOUNCE_DELAYS.SEARCH);
 
-  const filteredNotes = useFilteredNotes(debouncedSearch);
+  const {
+    data: notes = [],
+    isLoading,
+    isError,
+    error,
+  } = useNotes(debouncedSearch);
 
   const noteToDeleteData = notes.find((n) => n.id === noteToDelete);
 
   const handleDelete = useCallback((id: string) => {
     setNoteToDelete(id);
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-(--primary)" />
+          <p className="text-sm text-(--muted-foreground)">Loading notes...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="text-center">
+          <p className="text-(--destructive) font-medium">
+            Error loading notes
+          </p>
+          <p className="text-sm text-(--muted-foreground) mt-1">
+            {error instanceof Error ? error.message : 'Please try again later'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -47,7 +76,7 @@ export function NoteList() {
 
       <motion.div layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <AnimatePresence mode="popLayout" initial={false}>
-          {filteredNotes.length === 0 ? (
+          {notes.length === 0 ? (
             <motion.div
               layout
               className="col-span-full"
@@ -58,7 +87,7 @@ export function NoteList() {
               <EmptyState hasSearch={!!debouncedSearch} />
             </motion.div>
           ) : (
-            filteredNotes.map((note) => (
+            notes.map((note) => (
               <NoteCard key={note.id} note={note} onDelete={handleDelete} />
             ))
           )}

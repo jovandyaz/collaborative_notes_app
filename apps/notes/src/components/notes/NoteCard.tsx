@@ -2,6 +2,7 @@ import { memo } from 'react';
 
 import { Link } from '@tanstack/react-router';
 
+import type { NoteWithAccess } from '@knowtis/api-client';
 import {
   Button,
   Card,
@@ -13,15 +14,12 @@ import { Clock, Trash2 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 import { createPreview, formatNoteDate } from '@/lib';
-import type { Note } from '@/types';
 
 /**
  * Note card props interface
- * @property {Note} note - The note to display
- * @property {function} onDelete - Function to call when the note is deleted
  */
 interface NoteCardProps {
-  note: Note;
+  note: NoteWithAccess;
   onDelete: (id: string) => void;
 }
 

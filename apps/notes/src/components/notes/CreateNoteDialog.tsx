@@ -2,6 +2,7 @@ import { type FormEvent, useState } from 'react';
 
 import { useNavigate } from '@tanstack/react-router';
 
+import { useCreateNote } from '@knowtis/data-access-notes';
 import {
   Button,
   Dialog,
@@ -13,16 +14,14 @@ import {
   DialogTrigger,
   Input,
 } from '@knowtis/design-system';
-import { Plus } from 'lucide-react';
-
-import { useNotesStore } from '@/stores';
+import { Loader2, Plus } from 'lucide-react';
 
 export function CreateNoteDialog() {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const createNote = useNotesStore((state) => state.createNote);
+  const createNote = useCreateNote();
   const navigate = useNavigate();
 
   const handleSubmit = (e: FormEvent) => {
@@ -39,12 +38,22 @@ export function CreateNoteDialog() {
       return;
     }
 
-    const newNote = createNote({ title: trimmedTitle, content: '' });
-    setOpen(false);
-    setTitle('');
-    setError('');
-
-    navigate({ to: '/notes/$noteId', params: { noteId: newNote.id } });
+    createNote.mutate(
+      { title: trimmedTitle, content: '' },
+      {
+        onSuccess: (newNote) => {
+          setOpen(false);
+          setTitle('');
+          setError('');
+          navigate({ to: '/notes/$noteId', params: { noteId: newNote.id } });
+        },
+        onError: (err) => {
+          setError(
+            err instanceof Error ? err.message : 'Failed to create note'
+          );
+        },
+      }
+    );
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -83,6 +92,7 @@ export function CreateNoteDialog() {
               }}
               aria-invalid={!!error}
               autoFocus
+              disabled={createNote.isPending}
             />
             {error && (
               <p className="mt-2 text-sm text-(--destructive)">{error}</p>
@@ -94,10 +104,20 @@ export function CreateNoteDialog() {
               type="button"
               variant="outline"
               onClick={() => handleOpenChange(false)}
+              disabled={createNote.isPending}
             >
               Cancel
             </Button>
-            <Button type="submit">Create Note</Button>
+            <Button type="submit" disabled={createNote.isPending}>
+              {createNote.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create Note'
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
