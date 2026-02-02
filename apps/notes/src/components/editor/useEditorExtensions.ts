@@ -1,32 +1,23 @@
 import { useMemo } from 'react';
 
+import type { CollaborativeUser } from '@/types';
 import Collaboration from '@tiptap/extension-collaboration';
 import Underline from '@tiptap/extension-underline';
-import type { Extensions } from '@tiptap/react';
+import type { AnyExtension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import type { WebrtcProvider } from 'y-webrtc';
+import type { Awareness } from 'y-protocols/awareness';
 import type * as Y from 'yjs';
-
-import type { CollaborativeUser } from '@/types';
 
 import { CollaborativeCursors } from './CollaborativeCursors';
 
-/**
- * Hook for configuring Tiptap extensions for collaborative editing
- * @param yDoc - Yjs document instance
- * @param yXmlFragment - Yjs XML fragment for content storage
- * @param provider - WebRTC provider for P2P sync
- * @param currentUser - Current user information
- * @returns Array of configured TipTap extensions
- */
 export function useEditorExtensions(
   yDoc: Y.Doc,
   yXmlFragment: Y.XmlFragment,
-  provider: WebrtcProvider,
+  awareness: Awareness | null,
   currentUser: CollaborativeUser
-): Extensions {
-  return useMemo(
-    () => [
+): AnyExtension[] {
+  return useMemo(() => {
+    const extensions: AnyExtension[] = [
       StarterKit.configure({
         undoRedo: false,
         bulletList: {
@@ -44,20 +35,20 @@ export function useEditorExtensions(
         document: yDoc,
         fragment: yXmlFragment,
       }),
-      CollaborativeCursors.configure({
-        awareness: provider.awareness,
-        user: {
-          name: currentUser.name,
-          color: currentUser.color,
-        },
-      }),
-    ],
-    [
-      yDoc,
-      yXmlFragment,
-      provider.awareness,
-      currentUser.name,
-      currentUser.color,
-    ]
-  );
+    ];
+
+    if (awareness) {
+      extensions.push(
+        CollaborativeCursors.configure({
+          awareness,
+          user: {
+            name: currentUser.name,
+            color: currentUser.color,
+          },
+        })
+      );
+    }
+
+    return extensions;
+  }, [yDoc, yXmlFragment, awareness, currentUser.name, currentUser.color]);
 }

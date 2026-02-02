@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
 import type { IndexeddbPersistence } from 'y-indexeddb';
-import type { WebrtcProvider } from 'y-webrtc';
-import * as Y from 'yjs';
+import type { Awareness } from 'y-protocols/awareness';
+import type * as Y from 'yjs';
 
 /**
  * Yjs provider props interface
@@ -16,10 +16,10 @@ export interface YjsProviderProps {
  * Document resources interface
  * @property {Map<string, Y.Doc>} docs - The map of documents
  * @property {Map<string, IndexeddbPersistence>} persistence - The map of persistence
- * @property {Map<string, WebrtcProvider>} providers - The map of providers
+ * @property {Map<string, Awareness>} awareness - The map of awareness instances
  */
 export interface DocumentResources {
   docs: Map<string, Y.Doc>;
   persistence: Map<string, IndexeddbPersistence>;
-  providers: Map<string, WebrtcProvider>;
+  awareness: Map<string, Awareness>;
 }

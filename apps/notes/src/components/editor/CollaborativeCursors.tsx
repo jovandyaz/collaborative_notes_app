@@ -1,8 +1,7 @@
-import { Plugin, PluginKey } from '@tiptap/pm/state';
-import { Decoration, DecorationSet } from '@tiptap/pm/view';
-import { Extension } from '@tiptap/react';
-
 import type { AwarenessState, CollaborativeCursorsOptions } from '@/types';
+import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { DecorationSet, type Decoration } from '@tiptap/pm/view';
+import { Extension } from '@tiptap/react';
 
 import { getRemoteUserStates } from './awareness.utils';
 import { createUserDecorations } from './cursor-decorations.utils';
@@ -74,14 +73,18 @@ export const CollaborativeCursors =
             let isUpdating = false;
 
             const updateLocalCursor = () => {
-              if (isUpdating) return;
+              if (isUpdating) {
+                return;
+              }
 
               const { anchor, head } = editor.state.selection;
               awareness.setLocalStateField('cursor', { anchor, head });
             };
 
             const handleAwarenessUpdate = () => {
-              if (isUpdating) return;
+              if (isUpdating) {
+                return;
+              }
 
               isUpdating = true;
 

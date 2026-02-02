@@ -73,7 +73,9 @@ function ToolbarSeparator() {
 export const EditorToolbar = memo(function EditorToolbar({
   editor,
 }: EditorToolbarProps) {
-  if (!editor) return null;
+  if (!editor) {
+    return null;
+  }
 
   return (
     <motion.div

@@ -15,11 +15,15 @@ export function getRemoteUserStates(
   const remoteStates: RemoteUserState[] = [];
 
   states.forEach((state, clientId) => {
-    if (clientId === localClientId) return;
+    if (clientId === localClientId) {
+      return;
+    }
 
     const { user, cursor } = state;
 
-    if (!user || !cursor) return;
+    if (!user || !cursor) {
+      return;
+    }
 
     remoteStates.push({ clientId, user, cursor });
   });

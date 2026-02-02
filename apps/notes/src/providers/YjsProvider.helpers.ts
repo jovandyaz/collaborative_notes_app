@@ -1,5 +1,3 @@
-import * as Y from 'yjs';
-
 import {
   BROADCAST_MESSAGE_TYPES,
   COLLAB_CONFIG,
@@ -8,6 +6,7 @@ import {
   getRandomCursorColor,
 } from '@/lib';
 import type { BroadcastMessage, CollaborativeUser } from '@/types';
+import * as Y from 'yjs';
 
 import type { DocumentResources } from './YjsProvider.types';
 
@@ -97,7 +96,7 @@ export function createMessageHandler(
 }
 
 export function cleanupResources(resources: DocumentResources): void {
-  resources.providers.forEach((provider) => provider.destroy());
+  resources.awareness.forEach((awareness) => awareness.destroy());
   resources.docs.forEach((doc) => doc.destroy());
   resources.persistence.forEach((persistence) => persistence.destroy());
 }
