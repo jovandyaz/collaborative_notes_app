@@ -60,25 +60,11 @@
       }
     },
     "test": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/vitest:test",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "cwd": "apps/notes",
-        "command": "vitest"
-      }
-    },
-    "test:run": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "apps/notes",
-        "command": "vitest run"
-      }
-    },
-    "test:coverage": {
-      "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/coverage"],
-      "options": {
-        "cwd": "apps/notes",
-        "command": "vitest run --coverage"
+        "reportsDirectory": "../../coverage/apps/notes",
+        "passWithNoTests": true
       }
     }
   }

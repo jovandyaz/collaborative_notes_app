@@ -1,12 +1,19 @@
+import { resolve } from 'path';
+
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
-import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
   root: __dirname,
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    // Uses tsconfig.base.json paths for @knowtis/* aliases
+    nxViteTsPaths(),
+  ],
   build: {
     outDir: '../../dist/apps/notes',
     reportCompressedSize: true,
@@ -14,26 +21,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // Local app alias
       '@': resolve(__dirname, './src'),
+      // CSS import needs explicit path (not handled by tsconfig)
       '@knowtis/design-system/styles.css': resolve(
         __dirname,
         '../../libs/design-system/src/styles.css'
-      ),
-      '@knowtis/design-system': resolve(
-        __dirname,
-        '../../libs/design-system/src/index.ts'
-      ),
-      '@knowtis/shared-hooks': resolve(
-        __dirname,
-        '../../libs/shared/hooks/src/index.ts'
-      ),
-      '@knowtis/shared-util': resolve(
-        __dirname,
-        '../../libs/shared/util/src/index.ts'
-      ),
-      '@knowtis/data-access-notes': resolve(
-        __dirname,
-        '../../libs/data-access/notes/src/index.ts'
       ),
     },
   },
