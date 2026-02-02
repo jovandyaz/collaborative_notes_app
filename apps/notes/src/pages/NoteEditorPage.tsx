@@ -1,29 +1,56 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { Link, useNavigate, useParams } from '@tanstack/react-router';
 
-import type { Note } from '@knowtis/data-access-notes';
+import { useNote, useUpdateNote } from '@knowtis/data-access-notes';
 import { Button, Input } from '@knowtis/design-system';
-import { ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { useDebouncedCallback } from '@knowtis/shared-hooks';
+import { AlertCircle, ArrowLeft, Check, Loader2 } from 'lucide-react';
 
 import { CollaborativeEditor } from '@/components/editor';
-import { useDebouncedCallback } from '@/hooks';
 import { DEBOUNCE_DELAYS, formatNoteDateFull } from '@/lib';
-import { useNotesStore } from '@/stores';
 
-function NoteEditor({ note }: { note: Note }) {
-  const updateNote = useNotesStore((state) => state.updateNote);
+interface NoteEditorProps {
+  noteId: string;
+  initialTitle: string;
+  initialContent: string;
+  updatedAt: Date;
+}
 
-  const [title, setTitle] = useState(note.title);
-  const [content, setContent] = useState(note.content);
+function NoteEditor({
+  noteId,
+  initialTitle,
+  initialContent,
+  updatedAt,
+}: NoteEditorProps) {
+  const updateNote = useUpdateNote();
+  const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialContent);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [isPendingUpdate, setIsPendingUpdate] = useState(false);
+  const pendingUpdateRef = useRef(false);
 
-  const isSaving = title !== note.title || content !== note.content;
-
-  const debouncedUpdateNote = useDebouncedCallback((updates: Partial<Note>) => {
-    updateNote(note.id, updates);
-    setLastSaved(new Date());
-  }, DEBOUNCE_DELAYS.AUTO_SAVE);
+  const debouncedUpdateNote = useDebouncedCallback(
+    (updates: { title?: string; content?: string }) => {
+      pendingUpdateRef.current = true;
+      setIsPendingUpdate(true);
+      updateNote.mutate(
+        { id: noteId, input: updates },
+        {
+          onSuccess: () => {
+            setLastSaved(new Date());
+            pendingUpdateRef.current = false;
+            setIsPendingUpdate(false);
+          },
+          onError: () => {
+            pendingUpdateRef.current = false;
+            setIsPendingUpdate(false);
+          },
+        }
+      );
+    },
+    DEBOUNCE_DELAYS.AUTO_SAVE
+  );
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
@@ -38,6 +65,8 @@ function NoteEditor({ note }: { note: Note }) {
     },
     [debouncedUpdateNote]
   );
+
+  const isSaving = updateNote.isPending || isPendingUpdate;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6">
@@ -74,11 +103,11 @@ function NoteEditor({ note }: { note: Note }) {
       </div>
 
       <div className="mb-6 text-sm text-(--muted-foreground)">
-        Last updated: {formatNoteDateFull(note.updatedAt)}
+        Last updated: {formatNoteDateFull(updatedAt)}
       </div>
 
       <CollaborativeEditor
-        noteId={note.id}
+        noteId={noteId}
         initialContent={content}
         onUpdate={handleContentChange}
         placeholder="Start writing your note..."
@@ -91,19 +120,49 @@ export function NoteEditorPage() {
   const { noteId } = useParams({ from: '/notes/$noteId' });
   const navigate = useNavigate();
 
-  const note = useNotesStore((state) =>
-    state.notes.find((n) => n.id === noteId)
-  );
+  const { data: note, isLoading, isError, error } = useNote(noteId);
 
-  useEffect(() => {
-    if (!note) {
-      navigate({ to: '/' });
-    }
-  }, [note, navigate]);
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-(--primary)" />
+          <p className="text-sm text-(--muted-foreground)">Loading note...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="text-center">
+          <div className="flex justify-center mb-4">
+            <AlertCircle className="h-12 w-12 text-(--destructive)" />
+          </div>
+          <p className="text-(--destructive) font-medium">
+            Failed to load note
+          </p>
+          <p className="text-sm text-(--muted-foreground) mt-1 mb-4">
+            {error instanceof Error ? error.message : 'Note not found'}
+          </p>
+          <Button onClick={() => navigate({ to: '/' })}>Back to Notes</Button>
+        </div>
+      </div>
+    );
+  }
 
   if (!note) {
     return null;
   }
 
-  return <NoteEditor key={note.id} note={note} />;
+  return (
+    <NoteEditor
+      key={note.id}
+      noteId={note.id}
+      initialTitle={note.title}
+      initialContent={note.content}
+      updatedAt={note.updatedAt}
+    />
+  );
 }
