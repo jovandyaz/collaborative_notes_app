@@ -14,7 +14,6 @@ export const COLLAB_CONFIG = {
     '#c084fc', // purple
     '#f472b6', // pink
   ],
-  SIGNALING_SERVERS: ['wss://y-webrtc-eu.fly.dev', 'wss://y-webrtc-us.fly.dev'],
 } as const;
 
 /**
