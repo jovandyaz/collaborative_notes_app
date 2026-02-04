@@ -25,7 +25,7 @@ pre-commit:
 pre-push:
   commands:
     test:
-      run: npx nx affected -t test --base=origin/main --head=HEAD
+      run: NX_DAEMON=false npx nx affected -t test --base=origin/main --head=HEAD --output-style=stream
       skip:
         - merge
         - rebase
