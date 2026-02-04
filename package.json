@@ -32,7 +32,7 @@
     "db:studio": "nx db:studio api",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "prepare": "lefthook install",
+    "prepare": "[ -d .git ] && lefthook install || true",
     "knip": "knip",
     "knip:fix": "knip --fix"
   },
