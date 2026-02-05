@@ -69,10 +69,11 @@ Go to **Settings** and configure:
 In your API service, go to **"Variables"** tab and add:
 
 ```bash
-# Database (use Railway's reference syntax)
+# Database (Railway's reference variable syntax)
+# Uses internal network for faster, free connections between services
 DATABASE_URL=${{Postgres.DATABASE_URL}}
 
-# Redis (use Railway's reference syntax)
+# Redis (Railway's reference variable syntax)
 REDIS_URL=${{Redis.REDIS_URL}}
 
 # JWT Secrets (generate with: openssl rand -hex 32)
@@ -88,6 +89,7 @@ CORS_ORIGIN=https://your-app.vercel.app
 
 # Environment
 NODE_ENV=production
+# PORT is automatically provided by Railway, but you can set it explicitly
 PORT=3333
 
 # Feature Flags (optional)
@@ -110,9 +112,11 @@ openssl rand -hex 32
 ## Step 6: Generate Public Domain
 
 1. Click on your API service
-2. Go to **"Settings"** → **"Networking"**
+2. Go to **"Settings"** → **"Networking"** → **"Public Networking"**
 3. Click **"Generate Domain"**
 4. Note your URL: `https://knowtis-api-production-xxxx.railway.app`
+
+> **Note:** If you have a TCP Proxy assigned to your service, you won't see the "Generate Domain" option. Remove the TCP Proxy first by clicking the trashcan icon.
 
 ## Step 7: Configure Vercel Frontend
 
@@ -176,19 +180,45 @@ curl https://your-api.railway.app/api/v1/health/ready
 2. Check `REDIS_URL` is configured
 3. Verify frontend `VITE_API_URL` is correct
 
+### Redis Connection Issues (IPv6)
+
+If using `ioredis` and experiencing connection issues, ensure dual-stack DNS is enabled:
+
+```typescript
+// In your Redis configuration
+const redis = new Redis({
+  host: 'redis.railway.internal',
+  port: 6379,
+  family: 0, // Enable IPv4 + IPv6 dual-stack
+});
+```
+
+## Railway Private Networking
+
+Railway automatically enables private networking between services in your project. Services can communicate using the `.railway.internal` domain:
+
+- **PostgreSQL**: `postgres.railway.internal:5432`
+- **Redis**: `redis.railway.internal:6379`
+
+When using reference variables like `${{Postgres.DATABASE_URL}}`, Railway automatically uses the private network, which is:
+
+- **Faster**: No public internet routing
+- **Free**: No network egress charges
+- **Secure**: Traffic stays within Railway's infrastructure
+
 ## Environment Variables Reference
 
-| Variable                 | Required | Description                       |
-| ------------------------ | -------- | --------------------------------- |
-| `DATABASE_URL`           | Yes      | PostgreSQL connection string      |
-| `REDIS_URL`              | Yes      | Redis connection for Socket.io    |
-| `JWT_SECRET`             | Yes      | Access token signing key          |
-| `JWT_REFRESH_SECRET`     | Yes      | Refresh token signing key         |
-| `JWT_EXPIRES_IN`         | No       | Access token TTL (default: 15m)   |
-| `JWT_REFRESH_EXPIRES_IN` | No       | Refresh token TTL (default: 7d)   |
-| `CORS_ORIGIN`            | Yes      | Frontend URL for CORS             |
-| `NODE_ENV`               | No       | Environment (default: production) |
-| `PORT`                   | No       | Server port (default: 3333)       |
+| Variable                 | Required | Description                              |
+| ------------------------ | -------- | ---------------------------------------- |
+| `DATABASE_URL`           | Yes      | PostgreSQL connection string             |
+| `REDIS_URL`              | Yes      | Redis connection for Socket.io           |
+| `JWT_SECRET`             | Yes      | Access token signing key                 |
+| `JWT_REFRESH_SECRET`     | Yes      | Refresh token signing key                |
+| `JWT_EXPIRES_IN`         | No       | Access token TTL (default: 15m)          |
+| `JWT_REFRESH_EXPIRES_IN` | No       | Refresh token TTL (default: 7d)          |
+| `CORS_ORIGIN`            | Yes      | Frontend URL for CORS                    |
+| `NODE_ENV`               | No       | Environment (default: production)        |
+| `PORT`                   | No       | Server port (Railway provides this auto) |
 
 ## Monitoring
 
@@ -257,3 +287,14 @@ curl https://your-api.railway.app/api/v1/health/ping
 # View logs (Railway CLI)
 railway logs
 ```
+
+## Official Documentation
+
+- [Railway NestJS Guide](https://docs.railway.com/guides/nest)
+- [Railway PostgreSQL](https://docs.railway.com/guides/postgresql)
+- [Railway Redis](https://docs.railway.com/guides/redis)
+- [Railway Variables Reference](https://docs.railway.com/reference/variables)
+- [Railway Public Networking](https://docs.railway.com/guides/public-networking)
+- [Railway Private Networking](https://docs.railway.com/guides/private-networking)
+- [Vercel Vite Framework](https://vercel.com/docs/frameworks/frontend/vite)
+- [Vercel Environment Variables](https://vercel.com/docs/environment-variables)

@@ -45,3 +45,5 @@ libs/design-system/storybook-static
 .env.*.local
 
 vitest.config.*.timestamp*
+.vercel
+.env*.local
